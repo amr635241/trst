@@ -1,0 +1,29 @@
+let managerId = req.user._id;
+            let leadsInfo = [];
+            let promise = Agent.find({ manager_Id: managerId }).then(agents => {
+                agents.forEach(agent => {
+                    Lead.find({
+                        "agent.agent_ID": agent._id
+                    }).then(leads => {
+                        if (leads.length > 0) {
+                            leads.forEach(lead => {
+                                leadsInfo.push({
+                                    name: lead.name,
+                                    email: lead.email,
+                                    phoneNumber: lead.phoneNumber,
+                                    adress: lead.adress,
+                                    joinDate: lead.joinDate,
+                                    related: lead.related,
+                                    agent: lead.agent,
+                                    responsed: lead.responsed,
+                                    agentName: agent.name
+                                });
+                            });
+                        }
+                    });
+                });
+            });
+                Promise.all([promise]).then(() => {
+                    res.render("leads", { user: req.user, leads: leadsInfo });
+                });
+            
